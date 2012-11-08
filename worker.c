@@ -13,8 +13,9 @@ void *worker_thread(void *v) {
 			fprintf(stderr, "size is %i\n", list_size(list));
       if (list_size(list) == 0){
 				fprintf(stderr, "waiting for cv\n");
-        pthread_cond_wait(&poolsignal, &condlock);
+				pthread_cond_wait(&poolsignal, &condlock);
 				fprintf(stderr, "finished waiting for cv\n");
+			} else {
       	int reqsocket = list_dequeue(list);
 				fprintf(stderr,"\nsuccesfully dqueued value to %i\n", reqsocket);
 			/*
@@ -31,7 +32,6 @@ void *worker_thread(void *v) {
       //If the file exists, get its size and pass the whole thing back as a 200 response
       //If it does not, return a 404 response
       //Log the request*/
-
 			}
     }
     fprintf(stderr,"Thread 0x%0lx done.\n", (long)pthread_self());
