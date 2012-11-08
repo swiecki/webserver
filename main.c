@@ -88,10 +88,10 @@ void runserver(int numthreads, unsigned short serverport) {
             fprintf(stderr, "Got connection from %s:%d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
 
 					pthread_mutex_lock(&condlock);
-					fprintf(stderr,"about to enqueue");
+					fprintf(stderr,"about to enqueue\n");
 					list_enqueue(thelist,new_sock);
-					fprintf(stderr,"successfully enqueued");
 					pthread_cond_signal(&poolsignal);
+					fprintf(stderr,"successfully enqueued\n");
 					pthread_mutex_unlock(&condlock);
            ////////////////////////////////////////////////////////
            /* You got a new connection.  Hand the connection off
