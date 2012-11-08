@@ -42,11 +42,11 @@ void runserver(int numthreads, unsigned short serverport) {
 		pthread_cond_init(&poolsignal,NULL);
 
 		struct thread_args targs;
-		targs.stillrunning = still_running;
-		targs.list = thelist;
-		targs.loglock = loglock;
-		targs.condlock = condlock;
-		targs.poolsignal = poolsignal;
+		targs.stillrunning = &still_running;
+		targs.list = &thelist;
+		targs.loglock = &loglock;
+		targs.condlock = &condlock;
+		targs.poolsignal = &poolsignal;
 
 
 		pthread_t threads[numthreads];

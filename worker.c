@@ -4,19 +4,19 @@ void *worker_thread(void *v) {
     fprintf(stderr,"Thread 0x%0lx started.\n", (long)pthread_self());
 
     struct thread_args *targs = (struct thread_args*)v;
-    list_t *list = targs->list;
-    pthread_cond_t poolsignal = targs->poolsignal;
-    pthread_mutex_t loglock = targs->loglock;
-    pthread_mutex_t condlock = targs->condlock;
+    list_t **list = targs->list;
+    pthread_cond_t *poolsignal = targs->poolsignal;
+    pthread_mutex_t *loglock = targs->loglock;
+    pthread_mutex_t *condlock = targs->condlock;
                                                                                                        
     while(targs->stillrunning){
-			fprintf(stderr, "size is %i\n", list_size(list));
-      if (list_size(list) == 0){
+			fprintf(stderr, "size is %i\n", list_size(*list));
+      if (list_size(*list) == 0){
 				fprintf(stderr, "waiting for cv\n");
-				pthread_cond_wait(&poolsignal, &condlock);
+				pthread_cond_wait(poolsignal, condlock);
 				fprintf(stderr, "finished waiting for cv\n");
 			} else {
-      	int reqsocket = list_dequeue(list);
+      	int reqsocket = list_dequeue(*list);
 				fprintf(stderr,"\nsuccesfully dqueued value to %i\n", reqsocket);
 			/*
       //Once you're outside the lock and have a socket, which we'll assume is called reqsocket:
