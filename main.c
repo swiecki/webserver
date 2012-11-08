@@ -46,7 +46,7 @@ void runserver(int numthreads, unsigned short serverport) {
 		list_t *thelist = (list_t*)malloc(sizeof(list_t));
 		list_init(thelist);
 
-		struct thread_args targs = {thelist}; //pointer to linked list head goes in there
+		struct thread_args targs = {thelist}; //pointer to linked list head goes in there and cond variable and mutex
 		pthread_t threads[numthreads];
 		int i = 0;
 		for (; i < numthreads; i++){
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
     int num_threads = 1;
 
     int c;
-    while (-1 != (c = getopt(argc, argv, "hp:"))) {
+    while (-1 != (c = getopt(argc, argv, "p:t:h"))) {
         switch(c) {
             case 'p':
                 port = atoi(optarg);
