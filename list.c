@@ -17,7 +17,7 @@ void list_print(list_t *list) {
 		pthread_mutex_lock(&list->lock);
     struct __list_node *tmp = list->head;
     while (tmp) {
-        printf("%s\n", tmp->data);
+        printf("%i\n", tmp->data);
         tmp = tmp->next;
     }
 		pthread_mutex_unlock(&list->lock);
@@ -27,7 +27,7 @@ void list_print(list_t *list) {
 /* ************************************** 
  * add item "val" to the list
  * ************************************** */
-void list_add(list_t *list, const char *val) {
+void list_add(list_t *list, int val) {
 		pthread_mutex_lock(&list->lock);
     struct __list_node *new_node = (struct __list_node *)malloc (sizeof(struct __list_node));
     if (!new_node) {
@@ -35,7 +35,7 @@ void list_add(list_t *list, const char *val) {
         abort();
     }
 		//assign data to new node
-    new_node->data = (char *)val;
+    new_node->data = val;
 		//make new node new head
 		new_node->next = list->head;
     list->head = new_node;
@@ -46,7 +46,7 @@ void list_add(list_t *list, const char *val) {
 /* ************************************** 
  * Remove the item "target" from the list
  * ************************************** */
-void list_remove(list_t *list, const char *target) {
+void list_remove(list_t *list, int target) {
 		pthread_mutex_lock(&list->lock);
     /* short cut: is the list empty? */
     if (list == NULL || list->head == NULL){
@@ -55,7 +55,7 @@ void list_remove(list_t *list, const char *target) {
 		}
     struct __list_node *tmp = list->head;
 		//take care of case where head is deleted
-		while(tmp != NULL && strcmp(tmp->data, target) == 0){
+		while(tmp != NULL && tmp->data != target){
 			list->head = tmp->next;
 			//free those nodes
 			struct __list_node *tmp2 = tmp;
@@ -64,7 +64,7 @@ void list_remove(list_t *list, const char *target) {
 		}
 		//take care of everything else
     while (tmp != NULL && tmp->next != NULL) {
-				if(strcmp(tmp->next->data, target) == 0){
+				if(tmp->next->data == target){
 					struct __list_node *tmp2 = tmp->next;
 					tmp->next = tmp->next->next;
 					//free node
@@ -88,7 +88,6 @@ void list_clear(list_t *list) {
     struct __list_node *tmp = list->head;
     while (tmp) {
         struct __list_node *tmp2 = tmp->next;
-				free(tmp->data);
         free(tmp);
         tmp = tmp2;
     }

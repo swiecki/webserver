@@ -6,7 +6,7 @@
 #include <assert.h>
 
 struct __list_node {
-    char* data;
+    int data;
     struct __list_node *next;
 };
 
@@ -17,8 +17,8 @@ typedef struct {
 
 void list_init(list_t *);
 void list_clear(list_t *);
-void list_add(list_t *, const char *);
-void list_remove(list_t *, const char *);
+void list_add(list_t *, int);
+void list_remove(list_t *, int);
 void list_print(list_t *);
 
 #endif // __LIST_H__
