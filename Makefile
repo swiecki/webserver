@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -g -Wall -pthread
 TARGET = webserver
-OBJS = main.o network.o list.o
-DEPS = network.h list.h
+OBJS = main.o network.o list.o worker.o
+DEPS = network.h list.h worker.h
 .PHONY : clean
 
 all: $(TARGET)
