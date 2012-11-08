@@ -13,11 +13,11 @@
 #include "network.h"
 
 struct thread_args {                                                                                   
-  int *stillrunning;                                                                                   
-  list_t *list;                                                                                        
-  pthread_mutex_t *loglock;                                                                            
-  pthread_mutex_t *condlock;                                                                           
-  pthread_cond_t *poolsignal;                                                                          
+  int stillrunning;                                                                                   
+  list_t *list;
+  pthread_mutex_t loglock;
+  pthread_mutex_t condlock;
+  pthread_cond_t poolsignal;
 };    
 
 void *worker_thread(void *v);

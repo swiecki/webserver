@@ -87,11 +87,9 @@ int list_size(list_t *list) {
 	pthread_mutex_lock(&list->lock);
 	int size = 0;
 	struct __list_node *tmp = list->head;
-	while(tmp) {
-		if(tmp->next != NULL){
-			size++;
-		}
-		tmp = tmp->next;
+  while (tmp) {
+      size++;
+			tmp = tmp->next;
 	}
 	pthread_mutex_unlock(&list->lock);
 	return size;
