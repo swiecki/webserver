@@ -1,4 +1,5 @@
 #include <pthread.h>
+#include "list.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -9,9 +10,11 @@
 #include <signal.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>
-
 #include "network.h"
 
+struct thread_args {
+	list_t *list;
+};
 
 // global variable; can't be avoided because
 // of asynchronous signal interaction
@@ -40,13 +43,18 @@ void *worker_thread(void *v) {
 
 void runserver(int numthreads, unsigned short serverport) {
 
-    //////////////////////////////////////////////////
+		list_t *thelist = (list_t*)malloc(sizeof(list_t));
+		list_init(thelist);
 
-    // create your pool of threads here
+		struct thread_args targs = {thelist}; //pointer to linked list head goes in there
+		pthread_t threads[numthreads];
+		int i = 0;
+		for (; i < numthreads; i++){
+			if (0 > pthread_create(&threads[i], NULL, worker_thread, (void*)&targs)){
+				printf("Error");
+			}
+		}
 
-    //////////////////////////////////////////////////
-    
-    
     int main_socket = prepare_server_socket(serverport);
     if (main_socket < 0) {
         exit(-1);
