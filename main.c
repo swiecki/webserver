@@ -23,7 +23,15 @@ void *worker_thread(void *v) {
     
     struct thread_args *targs = (struct thread_args*)v;
 
-		//try to get a job from the queue and execute it in a loop
+	//try to get a job from the queue and execute it in a loop
+	
+	//Once you're outside the lock and have a socket, which we'll assume is called reqsocket:
+	char *reqbuffer = malloc(sizeof(char)*1024);
+	if (getrequest(reqsocket, &reqbuffer, 1024)<0){
+		fprintf(stderr, "Failed to retrieve request on socket %i.\n",reqsocket);
+		continue;//Or something of the sort to move on with the loop
+	}
+	
     
     fprintf(stderr,"Thread 0x%0lx done.\n", (long)pthread_self());    
     return NULL;
