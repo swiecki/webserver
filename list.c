@@ -25,9 +25,9 @@ void list_print(list_t *list) {
 
 
 /* ************************************** 
- * add item "val" to the list
+ * add item "val" to the queue
  * ************************************** */
-void list_add(list_t *list, int val) {
+void list_enqueue(list_t *list, int val) {
 		pthread_mutex_lock(&list->lock);
     struct __list_node *new_node = (struct __list_node *)malloc (sizeof(struct __list_node));
     if (!new_node) {
@@ -44,38 +44,25 @@ void list_add(list_t *list, int val) {
 
 
 /* ************************************** 
- * Remove the item "target" from the list
+ * Pop off an item from the queue
  * ************************************** */
-void list_remove(list_t *list, int target) {
+int list_dequeue(list_t *list) {
 		pthread_mutex_lock(&list->lock);
+		int toreturn = 0;
     /* short cut: is the list empty? */
     if (list == NULL || list->head == NULL){
 			pthread_mutex_unlock(&list->lock);
-      return;
+			//if stuff is broken, return -1
+      return -1;
 		}
     struct __list_node *tmp = list->head;
-		//take care of case where head is deleted
-		while(tmp != NULL && tmp->data != target){
-			list->head = tmp->next;
-			//free those nodes
-			struct __list_node *tmp2 = tmp;
-			free(tmp2);
-			tmp = list->head;
-		}
-		//take care of everything else
-    while (tmp != NULL && tmp->next != NULL) {
-				if(tmp->next->data == target){
-					struct __list_node *tmp2 = tmp->next;
-					tmp->next = tmp->next->next;
-					//free node
-					free(tmp2);
-				}else{
-		     	tmp = tmp->next;
-				}
-    }
+		toreturn = tmp->data;	
+		list->head = tmp->next;
+		//free those nodes
+		free(tmp);
 
 		pthread_mutex_unlock(&list->lock);
-    return;
+    return toreturn;
 }
 
 
@@ -96,3 +83,14 @@ void list_clear(list_t *list) {
 		pthread_mutex_destroy(&list->lock);
 }
 
+int list_size(list_t *list) {
+	pthread_mutex_lock(&list->lock);
+	int size = 0;
+	struct __list_node *tmp = list->head;
+	while(tmp) {
+		size++;
+		tmp = tmp->next;
+	}
+	pthread_mutex_unlock(&list->lock);
+	return size;
+}

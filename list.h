@@ -17,8 +17,9 @@ typedef struct {
 
 void list_init(list_t *);
 void list_clear(list_t *);
-void list_add(list_t *, int);
-void list_remove(list_t *, int);
+void list_enqueue(list_t *, int);
 void list_print(list_t *);
+int list_size(list_t *);
+int list_dequeue(list_t *);
 
 #endif // __LIST_H__
