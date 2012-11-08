@@ -50,16 +50,16 @@ void runserver(int numthreads, unsigned short serverport) {
 		
 		//Initialize mutex lock and condition variable
 		pthread_mutex_t *loglock = NULL;
-		pthread_mutex_init(loglock,NULL);
+		pthread_mutex_init(&loglock,NULL);
 		pthread_cond_t *poolsignal = NULL;
-		pthread_cond_init(poolsignal,NULL);
+		pthread_cond_init(&poolsignal,NULL);
 
-		struct thread_args targs = {thelist,loglock,poolsignal}; //pointer to linked list head goes in there and cond variable and mutex
+		struct thread_args targs = {&thelist,&loglock,&poolsignal}; //pointer to linked list head goes in there and cond variable and mutex
 		pthread_t threads[numthreads];
 		int i = 0;
 		for (; i < numthreads; i++){
 			if (0 > pthread_create(&threads[i], NULL, worker_thread, (void*)&targs)){
-				printf("Error");
+				printf("Error initializing thread");
 			}
 		}
 
