@@ -31,7 +31,10 @@ void *worker_thread(void *v) {
 		fprintf(stderr, "Failed to retrieve request on socket %i.\n",reqsocket);
 		continue;//Or something of the sort to move on with the loop
 	}
+	//Construct the full filepath
 	
+	//If the file exists, get its size and pass the whole thing back as a 200 response
+	//If it does not, return a 404 response
     
     fprintf(stderr,"Thread 0x%0lx done.\n", (long)pthread_self());    
     return NULL;
