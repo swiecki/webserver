@@ -27,8 +27,19 @@ void usage(const char *progname) {
     fprintf(stderr, "\tnumber of threads is 1 by default.\n");
     exit(0);
 }
+void *worker_thread(void *v) {
+    fprintf(stderr,"Thread 0x%0lx started.\n", (long)pthread_self());
+    
+    struct thread_args *targs = (struct thread_args*)v;
+
+		//try to get a job from the queue and execute it in a loop
+    
+    fprintf(stderr,"Thread 0x%0lx done.\n", (long)pthread_self());    
+    return NULL;
+}
 
 void runserver(int numthreads, unsigned short serverport) {
+
     //////////////////////////////////////////////////
 
     // create your pool of threads here
