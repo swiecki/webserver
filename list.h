@@ -7,6 +7,8 @@
 
 struct __list_node {
     int data;
+		char* ip;
+		int port;
     struct __list_node *next;
 };
 
@@ -17,9 +19,9 @@ typedef struct {
 
 void list_init(list_t *);
 void list_clear(list_t *);
-void list_enqueue(list_t *, int);
+void list_enqueue(list_t *, int, char*,int);
 void list_print(list_t *);
 int list_size(list_t *);
-int list_dequeue(list_t *);
+struct __list_node* list_dequeue(list_t *);
 
 #endif // __LIST_H__

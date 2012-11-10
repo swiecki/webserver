@@ -23,11 +23,10 @@ void list_print(list_t *list) {
 		pthread_mutex_unlock(&list->lock);
 }
 
-
 /* ************************************** 
  * add item "val" to the queue
  * ************************************** */
-void list_enqueue(list_t *list, int val) {
+void list_enqueue(list_t *list, int val, char *ip, int port) {
 		pthread_mutex_lock(&list->lock);
     struct __list_node *new_node = (struct __list_node *)malloc (sizeof(struct __list_node));
     if (!new_node) {
@@ -36,6 +35,8 @@ void list_enqueue(list_t *list, int val) {
     }
 		//assign data to new node
     new_node->data = val;
+		new_node->ip = ip;
+		new_node->port = port;
 		//make new node new head
 		new_node->next = list->head;
     list->head = new_node;
@@ -46,17 +47,19 @@ void list_enqueue(list_t *list, int val) {
 /* ************************************** 
  * Pop off an item from the queue
  * ************************************** */
-int list_dequeue(list_t *list) {
+struct __list_node * list_dequeue(list_t *list) {
 		pthread_mutex_lock(&list->lock);
-		int toreturn = 0;
+		struct __list_node *toreturn = (struct __list_node *)malloc (sizeof(struct __list_node));
     /* short cut: is the list empty? */
     if (list == NULL || list->head == NULL){
 			pthread_mutex_unlock(&list->lock);
 			//if stuff is broken, return -1
-      return -1;
+      return NULL;
 		}
     struct __list_node *tmp = list->head;
-		toreturn = tmp->data;	
+		toreturn->data = tmp->data;
+		toreturn->ip = tmp->ip;
+		toreturn->port = tmp->port;	
 		list->head = tmp->next;
 		//free those nodes
 		free(tmp);

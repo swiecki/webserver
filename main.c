@@ -30,6 +30,13 @@ void usage(const char *progname) {
 
 void runserver(int numthreads, unsigned short serverport) {
 
+		char *logpath = malloc(sizeof(char)*512);
+		getcwd(logpath,512);
+		strcat(logpath,"/weblog.txt");//TODO: Make this less garbage
+
+		int fd = open(logpath, O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
+		close(fd);
+	
 		list_t *thelist = (list_t*)malloc(sizeof(list_t));
 		list_init(thelist);
 		
@@ -88,21 +95,11 @@ void runserver(int numthreads, unsigned short serverport) {
             fprintf(stderr, "Got connection from %s:%d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
 
 					pthread_mutex_lock(&condlock);
-					fprintf(stderr,"about to enqueue\n");
-					list_enqueue(thelist,new_sock);
+					//fprintf(stderr,"about to enqueue\n");
+					list_enqueue(thelist,new_sock, inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
 					pthread_cond_signal(&poolsignal);
-					fprintf(stderr,"successfully enqueued\n");
+					//fprintf(stderr,"successfully enqueued\n");
 					pthread_mutex_unlock(&condlock);
-           ////////////////////////////////////////////////////////
-           /* You got a new connection.  Hand the connection off
-            * to one of the threads in the pool to process the
-            * request.
-            *
-            * Don't forget to close the socket (in the worker thread)
-            * when you're done.
-            */
-           ////////////////////////////////////////////////////////
-					//throw connection in the queue, signal condition variable
 				
         }
     }
