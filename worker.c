@@ -11,24 +11,28 @@ void *worker_thread(void *v) {
 	getcwd(logpath,512);
 	strcat(logpath,"/weblog.txt");
 	fprintf(stderr, "%s\n", logpath);
-	while(targs->stillrunning){
-		fprintf(stderr, "size is %i\n", list_size(*list));
+	while(*(targs->stillrunning)){
+		fprintf(stderr, "sr is %i\n", *(targs->stillrunning));
 		if (list_size(*list) == 0){
+			pthread_mutex_lock(condlock);
 			pthread_cond_wait(poolsignal, condlock);
+			pthread_mutex_unlock(condlock);
 		} 
 		else {
 			struct __list_node *node = list_dequeue(*list);
 			int reqsocket = node->data;
 			int port = node->port;
 			char *ip = node->ip;
+			free(node);
 			//Once you're outside the lock and have a socket, which we'll assume is called reqsocket:
 			char *reqbuffer = malloc(sizeof(char)*1024);
-			char *reqpath = malloc(sizeof(char)*1024);
+			char reqpath[1024];
 			int reqtype = 0;
 			int respsize = 0;
 			char header[1024];
 			getcwd(reqpath,1024);
 			fprintf(stderr,"testing prefix %s\n", reqpath);
+			fprintf(stderr,"testing filename %s\n",reqbuffer);
       if (getrequest(reqsocket, reqbuffer, 1024)<0){
         fprintf(stderr, "Failed to retrieve request on socket %i.\n",reqsocket);
         continue;//Or something of the sort to move on with the loop
@@ -52,8 +56,8 @@ void *worker_thread(void *v) {
 		
 				//Return the data
 				senddata(reqsocket,response,strlen(response)*sizeof(char));
-		
 				free(response);
+				free(reqbuffer);
 				//close the file
 				close(respStream);
 				} else {
@@ -87,5 +91,6 @@ void *worker_thread(void *v) {
    	 }
 	}
     fprintf(stderr,"Thread 0x%0lx done.\n", (long)pthread_self());
+		free(logpath);
     return NULL;
 }

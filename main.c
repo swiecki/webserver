@@ -36,7 +36,7 @@ void runserver(int numthreads, unsigned short serverport) {
 
 		int fd = open(logpath, O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
 		close(fd);
-	
+		free(logpath);        
 		list_t *thelist = (list_t*)malloc(sizeof(list_t));
 		list_init(thelist);
 		
@@ -103,8 +103,22 @@ void runserver(int numthreads, unsigned short serverport) {
 				
         }
     }
+		/*This block is commented out because in theory this is where we would join the threads, but in practice only one thread was ever exiting properly, and the rest were hanging. As such, we have two memory leaks per thread run. One of the frees for these threads is accomplished outside the while loop in tha thread, while the other is implicit in the thread join. 
+		fprintf(stderr,"%i",still_running);
+		int p = 0;
+		for(;p<numthreads;p++){
+				pthread_mutex_lock(&condlock);
+				pthread_cond_broadcast(&poolsignal);
+				pthread_join(threads[p],NULL);
+				pthread_mutex_unlock(&condlock);
+		}
+		*/
+		pthread_mutex_destroy(&loglock);
+		pthread_mutex_destroy(&condlock);
+		pthread_cond_destroy(&poolsignal);
     fprintf(stderr, "Server shutting down.\n");
-        
+		list_clear(thelist);
+		free(thelist);
     close(main_socket);
 }
 
