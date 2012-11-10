@@ -186,9 +186,7 @@ void runserver(int numthreads, unsigned short serverport) {
         int prv = poll(&pfd, 1, 10000);
 
         if (prv == 0) {
-						still_running = FALSE;
-				pthread_cond_broadcast(&poolsignal);
-            break;
+            continue;
         } else if (prv < 0) {
             PRINT_ERROR("poll");
             still_running = FALSE;
