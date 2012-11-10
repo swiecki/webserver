@@ -14,16 +14,13 @@ void *worker_thread(void *v) {
 	while(targs->stillrunning){
 		fprintf(stderr, "size is %i\n", list_size(*list));
 		if (list_size(*list) == 0){
-			fprintf(stderr, "waiting for cv\n");
 			pthread_cond_wait(poolsignal, condlock);
-			fprintf(stderr, "finished waiting for cv\n");
 		} 
 		else {
 			struct __list_node *node = list_dequeue(*list);
 			int reqsocket = node->data;
 			int port = node->port;
 			char *ip = node->ip;
-			fprintf(stderr,"\nsuccesfully dqueued value to %i\n", reqsocket);
 			//Once you're outside the lock and have a socket, which we'll assume is called reqsocket:
 			char *reqbuffer = malloc(sizeof(char)*1024);
 			char *reqpath = malloc(sizeof(char)*1024);
@@ -44,17 +41,19 @@ void *worker_thread(void *v) {
 				//set up header
 				sprintf( header, HTTP_200, (int) fileStat.st_size);
 				respsize = strlen(header)*sizeof(char) + fileStat.st_size;
-				char response[strlen(header) + fileStat.st_size];
+				char *response = malloc(strlen(header)*sizeof(char) + fileStat.st_size);
 				reqtype = 200;
 				int respStream = open(reqpath,O_RDONLY);
 				char contents[fileStat.st_size];
 				read(respStream,contents,fileStat.st_size);
 				strcpy(response,header);
+				fprintf(stderr,"\n %i, %i %s\n", sizeof(response), sizeof(contents), response);
 				strcat(response,contents);
 		
 				//Return the data
 				senddata(reqsocket,response,strlen(response)*sizeof(char));
 		
+				free(response);
 				//close the file
 				close(respStream);
 				} else {

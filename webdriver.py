@@ -46,7 +46,7 @@ def main(filelist, numreqs, host, port):
 
         # sleep for exponentially distributed amt of time,
         # avg of 1/2 second
-        time.sleep(random.expovariate(1.0/0.5))
+ #       time.sleep(random.expovariate(1.0/0.5))
         rnum += 1
 
 
