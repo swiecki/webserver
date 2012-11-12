@@ -46,6 +46,7 @@ void *worker_thread(void *v) {
                 pthread_cond_wait(poolsignal, condlock);
             }
             if(still_running == FALSE){
+            		pthread_mutex_unlock(condlock);
                 break;
             }
             pthread_mutex_unlock(condlock);

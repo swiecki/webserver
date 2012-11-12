@@ -15,7 +15,13 @@ void *worker_thread(void *v) {
 		fprintf(stderr, "sr is %i\n", *(targs->stillrunning));
 		if (list_size(*list) == 0){
 			pthread_mutex_lock(condlock);
-			pthread_cond_wait(poolsignal, condlock);
+			while(list_size(*list)== 0 && *(targs->stillrunning) == TRUE){
+				fprintf(stderr, "sr is %i\n", *(targs->stillrunning));
+				pthread_cond_wait(poolsignal, condlock);
+			}
+			if(*(targs->stillrunning) == FALSE){
+				break;
+			}
 			pthread_mutex_unlock(condlock);
 		} 
 		else {
